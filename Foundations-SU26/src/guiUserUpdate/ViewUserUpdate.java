@@ -114,6 +114,10 @@ public class ViewUserUpdate {
 	// This alert tells the user their requested username is already taken by another account;
 	private static Alert alertUsernameTaken = new Alert(AlertType.INFORMATION);
 	
+	// The most characters allowed in a Name or Email Address field. This exist purely to reject
+	// unreasonably long input before it's ever sent to the database.
+	private static final int MAX_TEXT_FIELD_LENGTH = 50;
+	
 	// These attributes are used to configure the page and populate it with this user's information
 	private static ViewUserUpdate theView;	// Used to determine if instantiation of the class
 											// is needed
@@ -326,7 +330,15 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 200);
         setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
         button_UpdateFirstName.setOnAction((_) -> {result = dialogUpdateFirstName.showAndWait();
-        	result.ifPresent(_ -> theDatabase.updateFirstName(theUser.getUserName(), result.get()));
+        	result.ifPresent(newValue -> {
+        		if (newValue.length() > MAX_TEXT_FIELD_LENGTH) {
+        			alertInputValidationError.setContentText(
+        					"First Name must not exceed " + MAX_TEXT_FIELD_LENGTH + " characters.");
+        			alertInputValidationError.showAndWait();
+        			return;
+        		}
+        		theDatabase.updateFirstName(theUser.getUserName(), newValue);
+        	});
         	theDatabase.getUserAccountDetails(theUser.getUserName());
          	String newName = theDatabase.getCurrentFirstName();
            	theUser.setFirstName(newName);
@@ -339,7 +351,15 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentMiddleName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 250);
         setupButtonUI(button_UpdateMiddleName, "Dialog", 18, 275, Pos.CENTER, 500, 243);
         button_UpdateMiddleName.setOnAction((_) -> {result = dialogUpdateMiddleName.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateMiddleName(theUser.getUserName(), result.get()));
+    		result.ifPresent(newValue -> {
+    			if (newValue.length() > MAX_TEXT_FIELD_LENGTH) {
+    				alertInputValidationError.setContentText(
+    						"Middle Name must not exceed " + MAX_TEXT_FIELD_LENGTH + " characters.");
+    				alertInputValidationError.showAndWait();
+    				return;
+    			}
+    			theDatabase.updateMiddleName(theUser.getUserName(), newValue);
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentMiddleName();
            	theUser.setMiddleName(newName);
@@ -352,7 +372,15 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentLastName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 300);
         setupButtonUI(button_UpdateLastName, "Dialog", 18, 275, Pos.CENTER, 500, 293);
         button_UpdateLastName.setOnAction((_) -> {result = dialogUpdateLastName.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateLastName(theUser.getUserName(), result.get()));
+    		result.ifPresent(newValue -> {
+    			if (newValue.length() > MAX_TEXT_FIELD_LENGTH) {
+    				alertInputValidationError.setContentText(
+    						"Last Name must not exceed " + MAX_TEXT_FIELD_LENGTH + " characters.");
+    				alertInputValidationError.showAndWait();
+    				return;
+    			}
+    			theDatabase.updateLastName(theUser.getUserName(), newValue);
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentLastName();
            	theUser.setLastName(newName);
@@ -368,8 +396,15 @@ public class ViewUserUpdate {
         setupButtonUI(button_UpdatePreferredFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 343);
         button_UpdatePreferredFirstName.setOnAction((_) -> 
         	{result = dialogUpdatePreferredFirstName.showAndWait();
-    		result.ifPresent(_ -> 
-    		theDatabase.updatePreferredFirstName(theUser.getUserName(), result.get()));
+    		result.ifPresent(newValue -> {
+    			if (newValue.length() > MAX_TEXT_FIELD_LENGTH) {
+    				alertInputValidationError.setContentText(
+    						"Preferred First Name must not exceed " + MAX_TEXT_FIELD_LENGTH + " characters.");
+    				alertInputValidationError.showAndWait();
+    				return;
+    			}
+    			theDatabase.updatePreferredFirstName(theUser.getUserName(), newValue);
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentPreferredFirstName();
            	theUser.setPreferredFirstName(newName);
@@ -382,7 +417,15 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentEmailAddress, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 400);
         setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
         button_UpdateEmailAddress.setOnAction((_) -> {result = dialogUpdateEmailAddresss.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
+    		result.ifPresent(newValue -> {
+    			if (newValue.length() > MAX_TEXT_FIELD_LENGTH) {
+    				alertInputValidationError.setContentText(
+    						"Email Address must not exceed " + MAX_TEXT_FIELD_LENGTH + " characters.");
+    				alertInputValidationError.showAndWait();
+    				return;
+    			}
+    			theDatabase.updateEmailAddress(theUser.getUserName(), newValue);
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newEmail = theDatabase.getCurrentEmailAddress();
            	theUser.setEmailAddress(newEmail);
