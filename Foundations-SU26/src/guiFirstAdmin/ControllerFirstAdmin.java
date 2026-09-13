@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import database.Database;
 import entityClasses.User;
 import javafx.stage.Stage;
+import passwordEvaluator.PasswordEvaluator;
+import userNameRecognizerTestbed.UserNameRecognizer;
 
 /*******
  * <p> Title: ControllerFirstAdmin Class. </p>
@@ -103,6 +105,23 @@ public class ControllerFirstAdmin {
 	 * 
 	 */
 	protected static void doSetupAdmin(Stage ps, int r) {
+		
+		// Validate the username before doing anything else with it.
+		String usernameError = UserNameRecognizer.checkForValidUserName(adminUsername);
+		if (usernameError != "" && usernameError.length() > 0) {
+			ViewFirstAdmin.text_AdminUsername.setText("");
+			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(usernameError);
+			return;
+		}
+		
+		// Validate the password next.
+		String passwordError = PasswordEvaluator.evaluatePassword(adminPassword1);
+		if (passwordError != "" && passwordError.length() > 0) {
+			ViewFirstAdmin.text_AdminPassword1.setText("");
+			ViewFirstAdmin.text_AdminPassword2.setText("");
+			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(passwordError);
+			return;
+		}
 		
 		// Make sure the two passwords are the same
 		if (adminPassword1.compareTo(adminPassword2) == 0) {

@@ -5,6 +5,8 @@ import java.util.Optional;
 import database.Database;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
@@ -12,6 +14,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import entityClasses.User;
+import passwordEvaluator.PasswordEvaluator;
+import userNameRecognizerTestbed.UserNameRecognizer;
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -96,11 +100,19 @@ public class ViewUserUpdate {
 	
 	// These are the set of pop-up dialog boxes that are used to enable the user to change the
 	// the values of the various account detail items.
+	private static TextInputDialog dialogUpdateUsername;
+	private static TextInputDialog dialogUpdatePassword;
 	private static TextInputDialog dialogUpdateFirstName;
 	private static TextInputDialog dialogUpdateMiddleName;
 	private static TextInputDialog dialogUpdateLastName;
 	private static TextInputDialog dialogUpdatePreferredFirstName;
 	private static TextInputDialog dialogUpdateEmailAddresss;
+	
+	// This alert tells the user why their new username or password failed validation.
+	private static Alert alertInputValidationError = new Alert(AlertType.INFORMATION);
+	
+	// This alert tells the user their requested username is already taken by another account;
+	private static Alert alertUsernameTaken = new Alert(AlertType.INFORMATION);
 	
 	// These attributes are used to configure the page and populate it with this user's information
 	private static ViewUserUpdate theView;	// Used to determine if instantiation of the class
@@ -215,6 +227,8 @@ public class ViewUserUpdate {
 		theUserUpdateScene = new Scene(theRootPane, width, height);
 
 		// Initialize the pop-up dialogs to an empty text filed.
+		dialogUpdateUsername = new TextInputDialog("");
+		dialogUpdatePassword = new TextInputDialog("");
 		dialogUpdateFirstName = new TextInputDialog("");
 		dialogUpdateMiddleName = new TextInputDialog("");
 		dialogUpdateLastName = new TextInputDialog("");
@@ -222,6 +236,19 @@ public class ViewUserUpdate {
 		dialogUpdateEmailAddresss = new TextInputDialog("");
 
 		// Establish the label for each of the dialogs.
+		dialogUpdateUsername.setTitle("Update Username");
+		dialogUpdateUsername.setHeaderText("Update your Username");
+		
+		dialogUpdatePassword.setTitle("Update Password");
+		dialogUpdatePassword.setHeaderText("Update your Password");
+
+		alertInputValidationError.setTitle("Invalid Input");
+		alertInputValidationError.setHeaderText("The information entered does not meet the requirements.");
+
+		alertUsernameTaken.setTitle("Username Unavailable");
+		alertUsernameTaken.setHeaderText("That username is already in use.");
+		alertUsernameTaken.setContentText("Choose a different username and try again.");
+
 		dialogUpdateFirstName.setTitle("Update First Name");
 		dialogUpdateFirstName.setHeaderText("Update your First Name");
 		
@@ -255,6 +282,44 @@ public class ViewUserUpdate {
         setupLabelUI(label_Password, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 150);
         setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
         setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
+        
+        // Wire up the Update Username button
+        // Wire up the Update Username button.
+        button_UpdateUsername.setOnAction((_) -> {
+        	result = dialogUpdateUsername.showAndWait();
+        	result.ifPresent(newUsername -> {
+        		String usernameError = UserNameRecognizer.checkForValidUserName(newUsername);
+        		if (usernameError != "" && usernameError.length() > 0) {
+        			alertInputValidationError.setContentText(usernameError);
+        			alertInputValidationError.showAndWait();
+        			return;
+        		}
+        		boolean success = theDatabase.updateUsername(theUser.getUserName(), newUsername);
+        		if (!success) {
+        			alertUsernameTaken.showAndWait();
+        			return;
+        		}
+        		theUser.setUserName(newUsername);
+        		label_CurrentUsername.setText(newUsername);
+        	});
+        });
+
+        // Wire up the Update Password button.
+        button_UpdatePassword.setOnAction((_) -> {
+        	result = dialogUpdatePassword.showAndWait();
+        	result.ifPresent(newPassword -> {
+        		String passwordError = PasswordEvaluator.evaluatePassword(newPassword);
+        		if (passwordError != "" && passwordError.length() > 0) {
+        			alertInputValidationError.setContentText(passwordError);
+        			alertInputValidationError.showAndWait();
+        			return;
+        		}
+        		theDatabase.updatePassword(theUser.getUserName(), newPassword);
+        		theUser.setPassword(newPassword);
+        		label_CurrentPassword.setText(newPassword);
+        	});
+        });
+
         
         // First Name
         setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);
@@ -334,7 +399,8 @@ public class ViewUserUpdate {
         // Populate the Pane's list of children widgets
         theRootPane.getChildren().addAll(
         		label_ApplicationTitle, label_Purpose, label_Username,
-        		label_CurrentUsername, 
+        		label_CurrentUsername,
+        		button_UpdateUsername,
         		label_Password, label_CurrentPassword, 
         		button_UpdatePassword, 
         		label_FirstName, label_CurrentFirstName, button_UpdateFirstName,

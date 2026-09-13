@@ -4,6 +4,8 @@ import java.sql.SQLException;
 
 import database.Database;
 import entityClasses.User;
+import passwordEvaluator.PasswordEvaluator;
+import userNameRecognizerTestbed.UserNameRecognizer;
 
 /*******
  * <p> Title: ControllerNewAccount Class. </p>
@@ -75,6 +77,25 @@ public class ControllerNewAccount {
 		// Initialize local variables that will be created during this process
 		int roleCode = 0;
 		User user = null;
+		
+		// Validate the username before doing anyting else with it.
+		String usernameError = UserNameRecognizer.checkForValidUserName(username);
+		if  (usernameError != "" && usernameError.length() > 0) {
+			ViewNewAccount.text_Username.setText("");
+			ViewNewAccount.alertInputValidationError.setContentText(usernameError);
+			ViewNewAccount.alertInputValidationError.showAndWait();
+			return;
+		}
+		
+		// Validate the password next.
+		String passwordError = PasswordEvaluator.evaluatePassword(password);
+		if (passwordError != "" && passwordError.length() > 0) {
+			ViewNewAccount.text_Password1.setText("");
+			ViewNewAccount.text_Password2.setText("");
+			ViewNewAccount.alertInputValidationError.setContentText(passwordError);
+			ViewNewAccount.alertInputValidationError.showAndWait();
+			return;
+		}
 
 		// Make sure the two passwords are the same.	
 		if (ViewNewAccount.text_Password1.getText().

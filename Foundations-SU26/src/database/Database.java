@@ -840,6 +840,36 @@ public class Database {
 	}
 	
 	
+	public boolean updateUsername(String oldUsername, String newUsername) {
+		if (doesUserExist(newUsername)) {
+			return false;
+		}
+		String query = "UPDATE userDB SET userName = ? WHERE userName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, newUsername);
+			pstmt.setString(2, oldUsername);
+			pstmt.executeUpdate();
+			currentUsername = newUsername;
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public void updatePassword(String username, String password) {
+	    String query = "UPDATE userDB SET password = ? WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, password);
+	        pstmt.setString(2, username);
+	        pstmt.executeUpdate();
+	        currentPassword = password;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	
 	/*******
 	 * <p> Method: boolean updateUserRole(String username, String role, String value) </p>
 	 * 
