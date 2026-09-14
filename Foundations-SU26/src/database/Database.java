@@ -222,6 +222,44 @@ public class Database {
 	}
 	
 /*******
+ *  <p> Method: List<String> getAllUserAccountSummaries() </p>
+ *  
+ *  <p> Description: Build a list of Strings, one per user account in the database, each
+ *       showing that user's username, full name, email, address, and assigned roles. Used by
+ *       the admin "List Users" screen. </p>
+ *       
+ *  @return a list of formated Strings, one per user account
+ */
+	public List<String> getAllUserAccountSummaries() {
+		List<String> summaries = new ArrayList<String>();
+		String query = "Select username, firstName, lastName, emailAddress, adminRole, newRole1, newRole2 FROM userDB";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String userName = rs.getString(1);
+				String firstName = rs.getString(2);
+				String lastName = rs.getString(3);
+				String email = rs.getString(4);
+				boolean admin = rs.getBoolean(5);
+				boolean role1 = rs.getBoolean(5);
+				boolean role2 = rs.getBoolean(6);
+				
+				String roles = "";
+				if (admin) roles += "Admin ";
+				if (role1) roles += "Role1 ";
+				if (role2) roles += "Role2 ";
+				if (roles.isEmpty()) roles = "<none>";
+				
+				String fullName = firstName + " " + lastName;
+				summaries.add(userName + " | " + fullName + " | " + email + " | " + roles.trim());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return summaries;
+	}
+
+/*******
  *  <p> Method: List getUserList() </p>
  *  
  *  <P> Description: Generate an List of Strings, one for each user in the database,

@@ -1,6 +1,14 @@
 package guiAdminHome;
 
+import java.util.List;
+
 import database.Database;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>
@@ -139,15 +147,29 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: listUsers () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that displays every user account in the system, showing
+	 * 		each account's username, full name, email address, and assigned roles, in a simple
+	 * 		pop-up window. </p>
 	 */
 	protected static void listUsers() {
-		System.out.println("\n*** WARNING ***: List Users Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("List User Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("List Users Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		List<String> summaries = theDatabase.getAllUserAccountSummaries();
+
+		Label header = new Label("Username  |  Name  |  Email  |  Roles");
+		ListView<String> listView = new ListView<String>();
+		listView.getItems().addAll(summaries);
+
+		Pane root = new Pane();
+		root.getChildren().addAll(header, listView);
+		header.setLayoutX(20);
+		header.setLayoutY(10);
+		listView.setLayoutX(20);
+		listView.setLayoutY(40);
+		listView.setPrefSize(560, 400);
+
+		Stage listStage = new Stage();
+		listStage.setTitle("All User Accounts");
+		listStage.setScene(new Scene(root, 600, 460));
+		listStage.show();
 	}
 	
 	/**********
