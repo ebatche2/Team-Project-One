@@ -1,12 +1,16 @@
 package guiAdminHome;
 
 import java.util.List;
+import java.util.Optional;
 
 import database.Database;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -131,15 +135,54 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: deleteUser () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that asks the admin which username to delete, confirms
+	 * 		with an "Are you sure?" prompt, blocks an admin from deleting their own account, and
+	 * 		then removes the account from the database. </p>
 	 */
 	protected static void deleteUser() {
-		System.out.println("\n*** WARNING ***: Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("Delete User Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		TextInputDialog dialog = new TextInputDialog("");
+		dialog.setTitle("Delete User");
+		dialog.setHeaderText("Enter the username of the account to delete");
+
+		Optional<String> result = dialog.showAndWait();
+		if (!result.isPresent() || result.get().trim().isEmpty()) {
+			return;
+		}
+		String targetUsername = result.get().trim();
+
+		// An admin cannot delete their own account
+		if (targetUsername.equals(ViewAdminHome.theUser.getUserName())) {
+			Alert selfDeleteAlert = new Alert(AlertType.INFORMATION);
+			selfDeleteAlert.setTitle("Action Not Allowed");
+			selfDeleteAlert.setHeaderText("You cannot delete your own account.");
+			selfDeleteAlert.setContentText("Ask another admin to remove this account if needed.");
+			selfDeleteAlert.showAndWait();
+			return;
+		}
+
+		// Make sure the account actually exists before asking for confirmation
+		if (!theDatabase.doesUserExist(targetUsername)) {
+			Alert notFoundAlert = new Alert(AlertType.INFORMATION);
+			notFoundAlert.setTitle("User Not Found");
+			notFoundAlert.setHeaderText("No account with that username was found.");
+			notFoundAlert.showAndWait();
+			return;
+		}
+
+		// Confirm before permanently deleting the account
+		Alert confirmAlert = new Alert(AlertType.CONFIRMATION);
+		confirmAlert.setTitle("Are You Sure?");
+		confirmAlert.setHeaderText("Delete account \"" + targetUsername + "\"?");
+		confirmAlert.setContentText("This cannot be undone.");
+
+		Optional<javafx.scene.control.ButtonType> confirmResult = confirmAlert.showAndWait();
+		if (confirmResult.isPresent() && confirmResult.get() == javafx.scene.control.ButtonType.OK) {
+			theDatabase.deleteUser(targetUsername);
+			Alert successAlert = new Alert(AlertType.INFORMATION);
+			successAlert.setTitle("User Deleted");
+			successAlert.setHeaderText("The account \"" + targetUsername + "\" has been deleted.");
+			successAlert.showAndWait();
+		}
 	}
 	
 	/**********

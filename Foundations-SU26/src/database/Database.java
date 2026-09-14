@@ -222,6 +222,27 @@ public class Database {
 	}
 	
 /*******
+* <p> Method: boolean deleteUser(String username) </p>
+* 
+* <p> Description: Permanently remove a user account from the database. </p>
+* 
+* @param username is the username of the account to remove
+* 
+* @return true if the deletion was successful, false if a database error occurred
+*/
+	public boolean deleteUser(String username) {
+		String query = "DELETE FROM userDB WHERE userName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, username);
+			pstmt.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+/*******
  *  <p> Method: List<String> getAllUserAccountSummaries() </p>
  *  
  *  <p> Description: Build a list of Strings, one per user account in the database, each
