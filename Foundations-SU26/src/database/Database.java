@@ -88,7 +88,7 @@ public class Database {
 			connection = DriverManager.getConnection(DB_URL, USER, PASS);
 			statement = connection.createStatement(); 
 			// You can use this command to clear the database and restart from fresh.
-			//statement.execute("DROP ALL OBJECTS");
+			// statement.execute("DROP ALL OBJECTS");
 
 			createTables();  // Create the necessary tables if they don't exist
 		} catch (ClassNotFoundException e) {
@@ -116,8 +116,15 @@ public class Database {
 				+ "emailAddress VARCHAR(255), "
 				+ "adminRole BOOL DEFAULT FALSE, "
 				+ "newRole1 BOOL DEFAULT FALSE, "
-				+ "newRole2 BOOL DEFAULT FALSE)";
+				+ "newRole2 BOOL DEFAULT FALSE, "
+				+ "isOneTimePassword BOOL DEFAULT FALSE)";
 		statement.execute(userTable);
+		
+		// This handles databases that already existed before the one-time-password feature was 
+		// added, so the new column gets added even to a database created by an earlier version 
+		// of this app.
+		statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS "
+				+ "isOneTimePassword BOOL DEFAULT FALSE");
 		
 		// Create the invitation codes table
 	    String invitationCodesTable = "CREATE TABLE IF NOT EXISTS InvitationCodes ("
@@ -219,6 +226,77 @@ public class Database {
 			pstmt.executeUpdate();
 		}
 		
+	}
+	
+	/*******
+	 * <p> Method: boolean setOneTimePassword(String username, String oneTimePassword) </p>
+	 * 
+	 * <p> Description: Set a temporary password for a user who has forgotten their password, and
+	 * 		mark it as a one-time password. Validation of the password (e.g., via
+	 * 		PasswordEvaluator) must be performed by the caller before this method is invoked. </p>
+	 * 
+	 * @param username is the username of the account
+	 * 
+	 * @param oneTimePassword is the temporary password to assign
+	 * 
+	 * @return true if the update was successful, false if a database error occurred
+	 */
+	public boolean setOneTimePassword(String username, String oneTimePassword) {
+		String query = "UPDATE userDB SET password = ?, isOneTimePassword = TRUE WHERE userName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, oneTimePassword);
+			pstmt.setString(2, username);
+			pstmt.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+
+	/*******
+	 * <p> Method: boolean isOneTimePassword(String username) </p>
+	 * 
+	 * <p> Description: Check whether the given account's current password is a one-time password
+	 * 		that must be replaced before the user can use the system normally. </p>
+	 * 
+	 * @param username is the username of the account
+	 * 
+	 * @return true if the account's password is a one-time password, else false
+	 */
+	public boolean isOneTimePassword(String username) {
+		String query = "SELECT isOneTimePassword FROM userDB WHERE userName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, username);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return rs.getBoolean(1);
+			}
+			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+
+	/*******
+	 * <p> Method: void clearOneTimePasswordFlag(String username) </p>
+	 * 
+	 * <p> Description: Clear the one-time password flag for an account, once the user has
+	 * 		successfully replaced it with a permanent password of their own choosing. </p>
+	 * 
+	 * @param username is the username of the account
+	 */
+	public void clearOneTimePasswordFlag(String username) {
+		String query = "UPDATE userDB SET isOneTimePassword = FALSE WHERE userName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, username);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 /*******

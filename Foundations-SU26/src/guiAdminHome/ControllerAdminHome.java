@@ -119,15 +119,56 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: setOnetimePassword () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that asks the admin which username needs a one-time
+	 * 		password, asks for the new temporary password (validated the same way as any other
+	 * 		password), and assigns it, marking it as a one-time password that must be replaced
+	 * 		the next time that user logs in. </p>
 	 */
 	protected static void setOnetimePassword () {
-		System.out.println("\n*** WARNING ***: One-Time Password Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("One-Time Password Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		TextInputDialog usernameDialog = new TextInputDialog("");
+		usernameDialog.setTitle("One-Time Password");
+		usernameDialog.setHeaderText("Enter the username that needs a one-time password");
+
+		Optional<String> usernameResult = usernameDialog.showAndWait();
+		if (!usernameResult.isPresent() || usernameResult.get().trim().isEmpty()) {
+			return;
+		}
+		String targetUsername = usernameResult.get().trim();
+
+		if (!theDatabase.doesUserExist(targetUsername)) {
+			Alert notFoundAlert = new Alert(AlertType.INFORMATION);
+			notFoundAlert.setTitle("User Not Found");
+			notFoundAlert.setHeaderText("No account with that username was found.");
+			notFoundAlert.showAndWait();
+			return;
+		}
+
+		TextInputDialog passwordDialog = new TextInputDialog("");
+		passwordDialog.setTitle("One-Time Password");
+		passwordDialog.setHeaderText("Enter the temporary password for \"" + targetUsername + "\"");
+
+		Optional<String> passwordResult = passwordDialog.showAndWait();
+		if (!passwordResult.isPresent() || passwordResult.get().trim().isEmpty()) {
+			return;
+		}
+		String oneTimePassword = passwordResult.get().trim();
+
+		String passwordError = passwordEvaluator.PasswordEvaluator.evaluatePassword(oneTimePassword);
+		if (passwordError != "" && passwordError.length() > 0) {
+			Alert invalidAlert = new Alert(AlertType.INFORMATION);
+			invalidAlert.setTitle("Invalid Password");
+			invalidAlert.setHeaderText("The temporary password does not meet the requirements.");
+			invalidAlert.setContentText(passwordError);
+			invalidAlert.showAndWait();
+			return;
+		}
+
+		theDatabase.setOneTimePassword(targetUsername, oneTimePassword);
+		Alert successAlert = new Alert(AlertType.INFORMATION);
+		successAlert.setTitle("One-Time Password Set");
+		successAlert.setHeaderText("A one-time password has been set for \"" + targetUsername + "\".");
+		successAlert.setContentText("They will be required to set a new password the next time they log in.");
+		successAlert.showAndWait();
 	}
 	
 	/**********

@@ -1,8 +1,14 @@
 package guiUserLogin;
 
+import java.util.Optional;
+
 import database.Database;
 import entityClasses.User;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+import passwordEvaluator.PasswordEvaluator;
 
 /*******
  * <p> Title: ControllerUserLogin Class. </p>
@@ -89,6 +95,44 @@ public class ControllerUserLogin {
     		return;
     	}
 		// System.out.println("*** Password is valid for this user");
+    	
+    	// If this account is currently using a one-time password, the user must set a new 
+    	// permanent password before they can proceed. They will need to log in again afterward.
+    	if (theDatabase.isOneTimePassword(username)) {
+    		TextInputDialog newPasswordDialog = new TextInputDialog("");
+    		newPasswordDialog.setTitle("Set a New Password");
+    		newPasswordDialog.setHeaderText("You are using a one-time password. "
+    				+ "Please set a new permanent password.");
+    		
+    		Optional<String> newPasswordResult = newPasswordDialog.showAndWait();
+    		if (!newPasswordResult.isPresent() || newPasswordResult.get().trim().isEmpty()) {
+    			return;
+    		}
+    		String newPassword = newPasswordResult.get().trim();
+    		
+    		String passwordError = PasswordEvaluator.evaluatePassword(newPassword);
+    		if (passwordError != "" && passwordError.length() > 0) {
+    			Alert invalidAlert = new Alert(AlertType.INFORMATION);
+    			invalidAlert.setTitle("Invalid Password");
+    			invalidAlert.setHeaderText("The new password does not meet the requirements.");
+    			invalidAlert.setContentText(passwordError);
+    			invalidAlert.showAndWait();
+    			return;
+    		}
+    		
+    		theDatabase.updatePassword(username, newPassword);
+    		theDatabase.clearOneTimePasswordFlag(username);
+    		
+    		Alert successAlert = new Alert(AlertType.INFORMATION);
+    		successAlert.setTitle("Password Updated");
+    		successAlert.setHeaderText("Your password has been updated.");
+    		successAlert.setContentText("Please log in again with your new password.");
+    		successAlert.showAndWait();
+    		
+    		ViewUserLogin.text_Username.setText("");
+    		ViewUserLogin.text_Password.setText("");
+    		return;
+    	}
 		
 		// Establish this user's details
     	User user = new User(username, password, theDatabase.getCurrentFirstName(), 
