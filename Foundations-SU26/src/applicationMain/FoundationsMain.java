@@ -89,7 +89,7 @@ public class FoundationsMain extends Application {
 		} catch (SQLException e) {
 			
 			// TEMPORARY: print the real error so we can see what's actually going wrong
-			e.printStackTrace();
+			// e.printStackTrace();
 						
 			// If the connection request fails, it usually means some other app is using it
 			databaseInUse.setTitle("*** ERROR ***");

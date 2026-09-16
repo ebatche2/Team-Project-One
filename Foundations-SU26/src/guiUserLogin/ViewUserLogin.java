@@ -59,6 +59,10 @@ public class ViewUserLogin {
 	private static Button button_SetupAccount = new Button("Setup Account");
 
 	private static Button button_Quit = new Button("Quit");
+	
+	// This label shows the login error message inline, right above the Username field, instead
+	// of in a separate pop-up window.
+	protected static Label label_LoginError = new Label("");
 
 	private static Stage theStage;	
 	private static Pane theRootPane;
@@ -132,6 +136,9 @@ public class ViewUserLogin {
 
 		setupLabelUI(label_LogInInsrtuctions, "Arial", 18, width, Pos.BASELINE_LEFT, 20, 120);
 
+		setupLabelUI(label_LoginError, "Arial", 15, 300, Pos.CENTER, 50, 250);
+		label_LoginError.setStyle("-fx-text-fill: #ED4245; -fx-font-weight: bold;");
+
 		// Establish the text input operand field for the username
 		setupTextUI(text_Username, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, true);
 		text_Username.setPromptText("Enter Username");
@@ -142,6 +149,8 @@ public class ViewUserLogin {
 
 		// Set up the Log In button
 		setupButtonUI(button_Login, "Dialog", 18, 200, Pos.CENTER, 475, 180);
+		button_Login.setStyle("-fx-background-color: #5865F2; -fx-text-fill: white; "
+				+ "-fx-font-weight: bold;");
 		button_Login.setOnAction((_) -> {ControllerUserLogin.doLogin(theStage); });
 
 		alertUsernamePasswordError.setTitle("Invalid username/password!");
@@ -165,6 +174,8 @@ public class ViewUserLogin {
 
 		// Set up the Quit button  
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
+		button_Quit.setStyle("-fx-background-color: #ED4245; -fx-text-fill: white; "
+				+ "-fx-font-weight: bold;");
 		button_Quit.setOnAction((_) -> {ControllerUserLogin.performQuit(); });
 
 		//		theRootPane.getChildren().clear();
@@ -172,7 +183,7 @@ public class ViewUserLogin {
 		theRootPane.getChildren().addAll(
 				label_ApplicationTitle, 
 				label_OperationalStartTitle,
-				label_LogInInsrtuctions, label_AccountSetupInsrtuctions, text_Username,
+				label_LogInInsrtuctions, label_LoginError, label_AccountSetupInsrtuctions, text_Username,
 				button_Login, text_Password, text_Invitation, button_SetupAccount,
 				button_Quit);
 	}

@@ -73,14 +73,26 @@ public class ControllerUserLogin {
 		String username = ViewUserLogin.text_Username.getText();
 		String password = ViewUserLogin.text_Password.getText();
     	boolean loginResult = false;
+
+		// Clear any red error outline left over from a previous failed attempt
+		// Clear any red error outline and error message left over from a previous failed attempt
+		String normalBorder = "";
+		ViewUserLogin.text_Username.setStyle(normalBorder);
+		ViewUserLogin.text_Password.setStyle(normalBorder);
+		ViewUserLogin.label_LoginError.setText("");
+
+		// This is the style applied to Username/Password to highlight an invalid login attempt,
+		// similar to how Discord outlines an invalid field in red.
+		String errorBorder = "-fx-border-color: #ED4245; -fx-border-width: 2; "
+				+ "-fx-border-radius: 3;";
     	
 		// Fetch the user and verify the username
      	if (theDatabase.getUserAccountDetails(username) == false) {
      		// Don't provide too much information.  Don't say the username is invalid or the
      		// password is invalid.  Just say the pair is invalid.
-    		ViewUserLogin.alertUsernamePasswordError.setContentText(
-    				"Incorrect username/password. Try again!");
-    		ViewUserLogin.alertUsernamePasswordError.showAndWait();
+     		ViewUserLogin.text_Username.setStyle(errorBorder);
+     		ViewUserLogin.text_Password.setStyle(errorBorder);
+     		ViewUserLogin.label_LoginError.setText("Incorrect username/password. Try again!");
     		return;
     	}
 		// System.out.println("*** Username is valid");
@@ -89,11 +101,13 @@ public class ControllerUserLogin {
     	String actualPassword = theDatabase.getCurrentPassword();
     	
     	if (password.compareTo(actualPassword) != 0) {
-    		ViewUserLogin.alertUsernamePasswordError.setContentText(
-    				"Incorrect username/password. Try again!");
-    		ViewUserLogin.alertUsernamePasswordError.showAndWait();
+    		ViewUserLogin.text_Username.setStyle(errorBorder);
+    		ViewUserLogin.text_Password.setStyle(errorBorder);
+    		ViewUserLogin.label_LoginError.setText("Incorrect username/password. Try again!");
     		return;
     	}
+		// System.out.println("*** Password is valid for this user");
+		// System.out.println("*** Password is valid for this user");
 		// System.out.println("*** Password is valid for this user");
     	
     	// If this account is currently using a one-time password, the user must set a new 
