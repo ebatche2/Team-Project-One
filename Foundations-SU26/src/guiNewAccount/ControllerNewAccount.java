@@ -78,12 +78,23 @@ public class ControllerNewAccount {
 		int roleCode = 0;
 		User user = null;
 		
+		// This is the style applied to a field to highlight a problem, matching the login screen.
+		String errorBorder = "-fx-border-color: #ED4245; -fx-border-width: 2; "
+				+ "-fx-border-radius: 3;";
+		String normalBorder = "";
+
+		// Clear any leftover error styling from a previous attempt
+		ViewNewAccount.text_Username.setStyle(normalBorder);
+		ViewNewAccount.text_Password1.setStyle(normalBorder);
+		ViewNewAccount.text_Password2.setStyle(normalBorder);
+		ViewNewAccount.label_NewAccountError.setText("");
+
 		// Validate the username before doing anyting else with it.
 		String usernameError = UserNameRecognizer.checkForValidUserName(username);
 		if  (usernameError != "" && usernameError.length() > 0) {
 			ViewNewAccount.text_Username.setText("");
-			ViewNewAccount.alertInputValidationError.setContentText(usernameError);
-			ViewNewAccount.alertInputValidationError.showAndWait();
+			ViewNewAccount.text_Username.setStyle(errorBorder);
+			ViewNewAccount.label_NewAccountError.setText(usernameError);
 			return;
 		}
 		
@@ -92,8 +103,9 @@ public class ControllerNewAccount {
 		if (passwordError != "" && passwordError.length() > 0) {
 			ViewNewAccount.text_Password1.setText("");
 			ViewNewAccount.text_Password2.setText("");
-			ViewNewAccount.alertInputValidationError.setContentText(passwordError);
-			ViewNewAccount.alertInputValidationError.showAndWait();
+			ViewNewAccount.text_Password1.setStyle(errorBorder);
+			ViewNewAccount.text_Password2.setStyle(errorBorder);
+			ViewNewAccount.label_NewAccountError.setText(passwordError);
 			return;
 		}
 
@@ -149,7 +161,9 @@ public class ControllerNewAccount {
 			// must be the same, and clear the message as soon as the first character is typed.
 			ViewNewAccount.text_Password1.setText("");
 			ViewNewAccount.text_Password2.setText("");
-			ViewNewAccount.alertUsernamePasswordError.showAndWait();
+			ViewNewAccount.text_Password1.setStyle(errorBorder);
+			ViewNewAccount.text_Password2.setStyle(errorBorder);
+			ViewNewAccount.label_NewAccountError.setText("The two passwords must be identical.");
 		}
 	}
 

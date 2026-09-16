@@ -54,6 +54,10 @@ public class ViewNewAccount {
     protected static PasswordField text_Password2 = new PasswordField();
     protected static Button button_UserSetup = new Button("User Setup");
     protected static TextField text_Invitation = new TextField();
+    
+    // This label shows validation errors inline, in the same red style as the login screen,
+    // instead of in a separate pop-up window.
+    protected static Label label_NewAccountError = new Label("");
 
 	// This alert is used should the invitation code be invalid
     protected static Alert alertInvitationCodeIsInvalid = new Alert(AlertType.INFORMATION);
@@ -139,8 +143,9 @@ public class ViewNewAccount {
 		
     	// Place all of the established GUI elements into the pane
     	theRootPane.getChildren().clear();
-    	theRootPane.getChildren().addAll(label_NewUserCreation, label_NewUserLine, text_Username,
-    			text_Password1, text_Password2, button_UserSetup, button_Quit);    	
+        theRootPane.getChildren().addAll(label_NewUserCreation, label_NewUserLine,
+        		label_NewAccountError, text_Username,
+        		text_Password1, text_Password2, button_UserSetup, button_Quit);    	
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
 		theStage.setTitle("CSE 360 Foundation Code: New User Account Setup");	
@@ -172,6 +177,9 @@ public class ViewNewAccount {
 	
     	// Label to display the  message for the first user
     	setupLabelUI(label_NewUserLine, "Arial", 24, width, Pos.CENTER, 0, 70);
+
+    	setupLabelUI(label_NewAccountError, "Arial", 14, 300, Pos.CENTER, 50, 300);
+    	label_NewAccountError.setStyle("-fx-text-fill: #ED4245; -fx-font-weight: bold;");
 		
 		// Establish the text input operand asking for a username
 		setupTextUI(text_Username, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, true);
@@ -201,10 +209,14 @@ public class ViewNewAccount {
 
         // Set up the account creation and login
         setupButtonUI(button_UserSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
+        button_UserSetup.setStyle("-fx-background-color: #5865F2; -fx-text-fill: white; "
+        		+ "-fx-font-weight: bold;");
         button_UserSetup.setOnAction((_) -> {ControllerNewAccount.doCreateUser(); });
 		
         // Enable the user to quit the application
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
+        button_Quit.setStyle("-fx-background-color: #ED4245; -fx-text-fill: white; "
+        		+ "-fx-font-weight: bold;");
         button_Quit.setOnAction((_) -> {ControllerNewAccount.performQuit(); });
 	}
 	
