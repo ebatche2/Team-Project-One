@@ -44,6 +44,17 @@ public class ViewFirstAdmin {
 
 	// These are the widget attributes for the GUI
 	
+	// style constants so this page's colors match ViewUserLogin
+	private static final String STYLE_BUTTON_PRIMARY =
+			"-fx-background-color: #5865F2; -fx-text-fill: white; -fx-font-weight: bold;";
+	private static final String STYLE_BUTTON_DANGER =
+			"-fx-background-color: #ED4245; -fx-text-fill: white; -fx-font-weight: bold;";
+	private static final String STYLE_LABEL_ERROR =
+			"-fx-text-fill: #ED4245; -fx-font-weight: bold;";
+	private static final String STYLE_FIELD_ERROR =
+			"-fx-border-color: #ED4245; -fx-border-width: 2; -fx-border-radius: 3;";
+	private static final String STYLE_FIELD_NORMAL = "";
+	
 	// The GUI informs the user about the purpose of this page, provides three text inputs fields
 	// for the user to specify a username for this account and two copies of the password to be
 	// used (they must match), a button to request that the account be established, and a quit
@@ -73,6 +84,7 @@ public class ViewFirstAdmin {
 	private static Pane theRootPane;
 	private static Scene theFirstAdminScene = null;
 	private static final int theRole = 1;		// Admin: 1; Role1: 2; Role2: 3
+	
 		
 	
 	/*-********************************************************************************************
@@ -176,14 +188,20 @@ public class ViewFirstAdmin {
 
 		// Set up the Log In button
 		setupButtonUI(button_AdminSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
+		// blue button style, matching ViewUserLogin's "Log In" button
+		button_AdminSetup.setStyle(STYLE_BUTTON_PRIMARY); 
 		button_AdminSetup.setOnAction((_) -> {
 			ControllerFirstAdmin.doSetupAdmin(theStage,1); 
 			});
 
+		
 		// Label to display the Passwords do not match error message
-		setupLabelUI(label_PasswordsDoNotMatch, "Arial", 18, width, Pos.CENTER, 0, 300);
-
+		setupLabelUI(label_PasswordsDoNotMatch, "Arial", 15, 300, Pos.CENTER, 50, 300);
+		label_PasswordsDoNotMatch.setStyle(STYLE_LABEL_ERROR); // red bold error text style, matching ViewUserLogin's error label
+		
+		
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
+		button_Quit.setStyle(STYLE_BUTTON_DANGER); // red button style, matching ViewUserLogin's "Quit" button
 		button_Quit.setOnAction((_) -> {ControllerFirstAdmin.performQuit(); });
 
 		// Place all of the just-initialized GUI elements into the pane
@@ -212,6 +230,20 @@ public class ViewFirstAdmin {
 	 * @param y		The location from the top (y axis)
 	 */
 
+	// new helper method
+	/**********
+	 * <p> Method: setFieldError(TextField field, boolean isError) </p>
+	 * 
+	 * <p> Description: Toggles the same red error border ViewUserLogin uses on Username/Password
+	 * when a field fails validation. </p>
+	 */
+	
+	protected static void setFieldError(TextField field, boolean isError) {
+		field.setStyle(isError ? STYLE_FIELD_ERROR : STYLE_FIELD_NORMAL);
+	}
+	
+	//
+	
 	private void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
 		l.setFont(Font.font(ff, f));
 		l.setMinWidth(w);

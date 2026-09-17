@@ -67,6 +67,8 @@ public class ControllerFirstAdmin {
 	 */
 	protected static void setAdminUsername() {
 		adminUsername = ViewFirstAdmin.text_AdminUsername.getText();
+		//  clear the red error border on the username field as soon as the user edits it
+		ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminUsername, false);
 	}
 	
 	
@@ -79,6 +81,9 @@ public class ControllerFirstAdmin {
 	 */
 	protected static void setAdminPassword1() {
 		adminPassword1 = ViewFirstAdmin.text_AdminPassword1.getText();
+		// clear red error borders on both password fields as soon as the user edits either
+		ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword1, false);   
+		ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword2, false);
 		ViewFirstAdmin.label_PasswordsDoNotMatch.setText("");
 	}
 	
@@ -91,7 +96,10 @@ public class ControllerFirstAdmin {
 	 * 
 	 */
 	protected static void setAdminPassword2() {
-		adminPassword2 = ViewFirstAdmin.text_AdminPassword2.getText();		
+		adminPassword2 = ViewFirstAdmin.text_AdminPassword2.getText();
+		// same as above, for password field 2
+		ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword1, false);   
+		ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword2, false);
 		ViewFirstAdmin.label_PasswordsDoNotMatch.setText("");
 	}
 	
@@ -110,6 +118,8 @@ public class ControllerFirstAdmin {
 		String usernameError = UserNameRecognizer.checkForValidUserName(adminUsername);
 		if (usernameError != "" && usernameError.length() > 0) {
 			ViewFirstAdmin.text_AdminUsername.setText("");
+			// red border on the username field when validation fails
+			ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminUsername, true);
 			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(usernameError);
 			return;
 		}
@@ -119,6 +129,9 @@ public class ControllerFirstAdmin {
 		if (passwordError != "" && passwordError.length() > 0) {
 			ViewFirstAdmin.text_AdminPassword1.setText("");
 			ViewFirstAdmin.text_AdminPassword2.setText("");
+			// red borders on both password fields when password validation fails
+			ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword1, true);   
+			ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword2, true);
 			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(passwordError);
 			return;
 		}
@@ -147,6 +160,9 @@ public class ControllerFirstAdmin {
 			// must be the same, and clear the message as soon as the first character is typed.
 			ViewFirstAdmin.text_AdminPassword1.setText("");
 			ViewFirstAdmin.text_AdminPassword2.setText("");
+			// red borders on both password fields when the two passwords don't match
+			ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword1, true);   
+			ViewFirstAdmin.setFieldError(ViewFirstAdmin.text_AdminPassword2, true); 
 			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(
 					"The two passwords must match. Please try again!");
 		}

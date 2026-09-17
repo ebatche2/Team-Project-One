@@ -76,7 +76,7 @@ public class UserNameRecognizer {
 		// Check to ensure that there is input to process
 		if(input.length() <= 0) {
 			userNameRecognizerIndexofError = 0;	// Error at first character;
-			return "\n*** ERROR *** The input is empty";
+			return "\nERROR: The input is empty!";
 		}
 		
 		// The local variables used to perform the Finite State Machine simulation
@@ -214,7 +214,7 @@ public class UserNameRecognizer {
 		// makes it possible for this code to display a very specific error message to improve the
 		// user experience.
 		userNameRecognizerIndexofError = currentCharNdx;	// Set index of a possible error;
-		userNameRecognizerErrorMessage = "\n*** ERROR *** ";
+		userNameRecognizerErrorMessage = "\nERROR: ";
 		
 		// The following code is a slight variation to support just console output.
 		switch (state) {
