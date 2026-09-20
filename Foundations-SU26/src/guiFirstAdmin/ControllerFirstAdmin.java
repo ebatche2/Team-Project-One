@@ -153,7 +153,7 @@ public class ControllerFirstAdmin {
             }
             
             // User was established in the database, so navigate to the User Update Page
-        	guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewFirstAdmin.theStage, user);
+        	guiUserLogin.ViewUserLogin.displayUserLogin(ViewFirstAdmin.theStage);
 		}
 		else {
 			// The two passwords are NOT the same, so clear the passwords, explain the passwords

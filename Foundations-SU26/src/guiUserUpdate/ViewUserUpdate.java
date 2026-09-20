@@ -321,7 +321,9 @@ public class ViewUserUpdate {
         		theDatabase.updatePassword(theUser.getUserName(), newPassword);
         		theUser.setPassword(newPassword);
         		label_CurrentPassword.setText(newPassword);
+        		
         	});
+        	guiUserLogin.ViewUserLogin.displayUserLogin(ViewUserUpdate.theStage);
         });
 
         

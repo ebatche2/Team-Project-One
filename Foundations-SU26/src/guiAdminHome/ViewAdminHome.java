@@ -165,7 +165,7 @@ public class ViewAdminHome {
 		theUser = user;
 		
 		// If not yet established, populate the static aspects of the GUI
-		if (theView == null) theView = new ViewAdminHome();		// Instantiate singleton if needed
+		theView = new ViewAdminHome();		// Instantiate singleton if needed
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.

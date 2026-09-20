@@ -224,6 +224,7 @@ public class ControllerAdminHome {
 			successAlert.setHeaderText("The account \"" + targetUsername + "\" has been deleted.");
 			successAlert.showAndWait();
 		}
+		
 	}
 	
 	/**********
@@ -284,7 +285,7 @@ public class ControllerAdminHome {
 	 * @param emailAddress	This String holds what is expected to be an email address
 	 */
 	protected static boolean invalidEmailAddress(String emailAddress) {
-		if (emailAddress.length() == 0) {
+		if (emailAddress.length() == 0 || emailAddress.length() > 50) {
 			ViewAdminHome.alertEmailError.setContentText(
 					"Correct the email address and try again.");
 			ViewAdminHome.alertEmailError.showAndWait();
