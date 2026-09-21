@@ -243,7 +243,7 @@ public class ControllerAddRemoveRoles {
 		
 		// If the selection is the list header (e.g., "<Select a role>") don't do anything
 		if (ViewAddRemoveRoles.theRemoveRole.compareTo("<Select a role>") != 0) {
-			if (ViewAddRemoveRoles.theSelectedUser==ViewAddRemoveRoles.theUser.getUserName()) {
+			if ((ViewAddRemoveRoles.theRemoveRole.equals("Admin")) && (ViewAddRemoveRoles.theSelectedUser.equals(ViewAddRemoveRoles.theUser.getUserName()))) {
 				return;
 			}
 			// If an actual role was selected, update the database entry for that user for the role
