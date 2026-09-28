@@ -321,7 +321,7 @@ public class Database {
 	}
 	
 /*******
- *  <p> Method: List<String> getAllUserAccountSummaries() </p>
+ *  <p> Method: {@code List<String> getAllUserAccountSummaries()} </p>
  *  
  *  <p> Description: Build a list of Strings, one per user account in the database, each
  *       showing that user's username, full name, email, address, and assigned roles. Used by
@@ -362,7 +362,7 @@ public class Database {
  *  <p> Method: List getUserList() </p>
  *  
  *  <P> Description: Generate an List of Strings, one for each user in the database,
- *  starting with "<Select User>" at the start of the list. </p>
+ *  starting with "{@code <Select User>}" at the start of the list. </p>
  *  
  *  @return a list of userNames found in the database.
  */
@@ -977,6 +977,13 @@ public class Database {
 	}
 	
 	
+	/**
+	 * Changes the username in the database.
+	 * 
+	 * @param oldUsername of the account
+	 * @param newUsername to assign
+	 * @return true if the update succeeded, false otherwise
+	 */
 	public boolean updateUsername(String oldUsername, String newUsername) {
 		if (doesUserExist(newUsername)) {
 			return false;
@@ -994,6 +1001,12 @@ public class Database {
 		}
 	}
 
+	/**
+	 * This method updates a user's password
+	 * 
+	 * @param username to look up
+	 * @param password to check
+	 */
 	public void updatePassword(String username, String password) {
 	    String query = "UPDATE userDB SET password = ? WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {

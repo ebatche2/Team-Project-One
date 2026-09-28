@@ -50,6 +50,16 @@ public class User {
      * 
      * @param password specifies the account password for this user
      * 
+     * @param fn specifies the account first name for the user
+     * 
+     * @param mn specifies the account middle name for the user
+     * 
+     * @param ln specifies the account last name for the user
+     * 
+     * @param pfn specifies the account preferred first name for the user
+     * 
+     * @param ea specifies the account email address for the user
+     * 
      * @param r1 specifies the the Admin attribute (TRUE or FALSE) for this user
      * 
      * @param r2 specifies the the Student attribute (TRUE or FALSE) for this user
@@ -197,7 +207,11 @@ public class User {
      */
     // Gets the current value of the Student role attribute.
     public String getEmailAddress() { return emailAddress; }
-
+    
+    /**
+     * Sets the user's username.
+     * @param s the new username
+     */
     public void setUserName(String s) { userName = s; }
     public void setPassword(String s) { password = s; }
     public void setFirstName(String s) { firstName = s; }

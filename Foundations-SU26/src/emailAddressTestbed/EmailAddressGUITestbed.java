@@ -20,11 +20,22 @@ import javafx.stage.Stage;
  * 
  */
 
+/**
+ * 
+ */
 public class EmailAddressGUITestbed extends Application {
 	
+	/**
+	 * The width of the application window, in pixels
+	 */
 	public final static double WINDOW_WIDTH = 500;
+	/**
+	 * The height of the application window, in pixels
+	 */
 	public final static double WINDOW_HEIGHT = 250;
-	
+	/**
+	 * The GUI window for this testbed application.
+	 */
 	public UserInterface theGUI;
 
 	/**********
@@ -64,6 +75,12 @@ public class EmailAddressGUITestbed extends Application {
 	/*******************************************************************************************************
 	 * This is the method that launches the JavaFX application
 	 * 
+	 */
+	
+	/**
+	 * Entry point for the email address testbed application.
+	 *
+	 * @param args command-line arguments (not used)
 	 */
 	public static void main(String[] args) {				// This method may not be required
 		launch(args);										// for all JavaFX applications using

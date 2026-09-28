@@ -242,10 +242,10 @@ public class ControllerAddRemoveRoles {
 				combobox_SelectRoleToRemove.getValue();
 		
 		// If the selection is the list header (e.g., "<Select a role>") don't do anything
-		if (ViewAddRemoveRoles.theRemoveRole.compareTo("<Select a role>") != 0) {
-			if (ViewAddRemoveRoles.theSelectedUser==ViewAddRemoveRoles.theUser.getUserName()) {
-				return;
-			}
+		if (ViewAddRemoveRoles.theSelectedUser.compareTo(
+				ViewAddRemoveRoles.theUser.getUserName()) == 0) {
+			return;
+		}
 			// If an actual role was selected, update the database entry for that user for the role
 			if (theDatabase.updateUserRole(ViewAddRemoveRoles.theSelectedUser, 
 					ViewAddRemoveRoles.theRemoveRole, "false") ) {
@@ -257,7 +257,7 @@ public class ControllerAddRemoveRoles {
 				setupSelectedUser();
 			}				
 		}
-	}
+	
 	
 	
 	/**********
